@@ -77,19 +77,20 @@ var keys = keyMap{
 }
 
 type model struct {
-	headlines   [][]godrudge.Headline // all headlines of drudge report
-	cursorx     int                   // the current column
-	cursory     int                   // the current row in the current column
-	curMaxRow   int                   // the max number of rows in the current column
-	width       int                   // width of the terminal
-	maxRows     int                   // represents the column with the most headlines
-	columnWidth int                   // the width of each column
-	selected    godrudge.Headline     // the currently selected headline
-	keys        keyMap                // the keybindings
-	help        help.Model            // the help view
-	inputStyle  lipgloss.Style        // style for debug info
-	lastKey     string                // the last key pressed, for debug purposes
-	quitting    bool                  // whether the application is quitting
+	headlines     [][]godrudge.Headline // all headlines of drudge report
+	mainHeadlines []godrudge.Headline   // the main headlines, which are displayed above the logo section
+	cursorx       int                   // the current column
+	cursory       int                   // the current row in the current column
+	curMaxRow     int                   // the max number of rows in the current column
+	width         int                   // width of the terminal
+	maxRows       int                   // represents the column with the most headlines
+	columnWidth   int                   // the width of each column
+	selected      godrudge.Headline     // the currently selected headline
+	keys          keyMap                // the keybindings
+	help          help.Model            // the help view
+	inputStyle    lipgloss.Style        // style for debug info
+	lastKey       string                // the last key pressed, for debug purposes
+	quitting      bool                  // whether the application is quitting
 }
 
 func initialModel() model {
@@ -108,11 +109,12 @@ func initialModel() model {
 	}
 
 	model := model{
-		headlines:  client.Page.HeadlineColumns,
-		maxRows:    maxRows,
-		keys:       keys,
-		help:       help.New(),
-		inputStyle: lipgloss.NewStyle().Foreground(lipgloss.Color("#FF75B7")),
+		headlines:     client.Page.HeadlineColumns,
+		mainHeadlines: client.Page.MainHeadlines,
+		maxRows:       maxRows,
+		keys:          keys,
+		help:          help.New(),
+		inputStyle:    lipgloss.NewStyle().Foreground(lipgloss.Color("#FF75B7")),
 	}
 
 	return model
