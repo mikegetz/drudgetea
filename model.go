@@ -79,6 +79,7 @@ var keys = keyMap{
 type model struct {
 	headlines     [][]godrudge.Headline // all headlines of drudge report
 	mainHeadlines []godrudge.Headline   // the main headlines, which are displayed above the logo section
+	topHeadlines  []godrudge.Headline   // the top headlines, which are displayed above the main headlines left aligned
 	cursorx       int                   // the current column
 	cursory       int                   // the current row in the current column
 	curMaxRow     int                   // the max number of rows in the current column
@@ -111,6 +112,7 @@ func initialModel() model {
 	model := model{
 		headlines:     client.Page.HeadlineColumns,
 		mainHeadlines: client.Page.MainHeadlines,
+		topHeadlines:  client.Page.TopHeadlines,
 		maxRows:       maxRows,
 		keys:          keys,
 		help:          help.New(),

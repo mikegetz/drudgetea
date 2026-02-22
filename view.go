@@ -18,16 +18,11 @@ var (
 func (m model) View() string {
 	centerStyle := lipgloss.NewStyle().Width(m.width).Align(lipgloss.Center)
 
-	view := ""
+	view := "\n"
 
-	view += m.MainHeadlineView()
-
-	view += "\n"
-
-	view += centerStyle.Render(logo)
-
-	view += "\n"
-
+	view += m.TopHeadlineView() + "\n"
+	view += m.MainHeadlineView() + "\n"
+	view += centerStyle.Render(logo) + "\n"
 	view += m.ColumnView()
 
 	// The footer
@@ -46,6 +41,19 @@ func (m model) View() string {
 	view += strings.Repeat("\n", height) + helpView
 
 	// Send the UI for rendering
+	return view
+}
+
+func (m model) TopHeadlineView() string {
+	view := ""
+	for _, mainHeadline := range m.topHeadlines {
+		if mainHeadline.Color == "\033[31m" {
+			view += redStyle.Align(lipgloss.Left).Render(mainHeadline.Title)
+		} else {
+			view += blueStyle.Align(lipgloss.Left).Render(mainHeadline.Title)
+		}
+		view += "\n"
+	}
 	return view
 }
 
