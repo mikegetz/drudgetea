@@ -9,6 +9,8 @@ import (
 )
 
 func (m model) View() string {
+	cs := " | "
+	columnSeparator := lipgloss.NewStyle().Foreground(lipgloss.Color("#888888")).Render(cs)
 	centerStyle := lipgloss.NewStyle().Width(m.width).Align(lipgloss.Center)
 	redStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#FF0000"))
 	blueStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#3030fe"))
@@ -23,7 +25,7 @@ func (m model) View() string {
 			maxColumnSize = len(col)
 		}
 	}
-	columnWidth := m.width / len(m.headlines)
+	columnWidth := (m.width - (len(cs) * 2)) / len(m.headlines)
 
 	if columnWidth > 3 {
 		for i := 0; i < maxColumnSize; i++ {
@@ -49,7 +51,7 @@ func (m model) View() string {
 					view += strings.Repeat(" ", columnWidth)
 				}
 				if j < len(m.headlines)-1 {
-					view += " | "
+					view += columnSeparator
 				}
 			}
 			view += "\n"
@@ -61,7 +63,7 @@ func (m model) View() string {
 	view += "\n Selected: " + m.selected.Title + "\n(" + m.selected.Href + ")\n"
 
 	if os.Getenv("DEBUG") != "" {
-		view += m.inputStyle.Render("Debug: "+fmt.Sprintf("cursorx: %d, cursory: %d, curMaxRow: %d", m.cursorx, m.cursory, m.curMaxRow)) + "\n"
+		view += m.inputStyle.Render("Debug: "+fmt.Sprintf("cursorx: %d, cursory: %d, curMaxRow: %d, columnWidth: %d", m.cursorx, m.cursory, m.curMaxRow, columnWidth)) + "\n"
 	}
 
 	// The help view
