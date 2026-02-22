@@ -11,7 +11,9 @@ import (
 var (
 	cs              = " | "
 	columnSeparator = lipgloss.NewStyle().Foreground(lipgloss.Color("#888888")).Render(cs)
-	helpStyle       = lipgloss.NewStyle().Foreground(lipgloss.Color("#4A4A4A"))
+	helpDescStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("#4A4A4A"))
+	helpKeyStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("#626262"))
+	helpSepStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("#3C3C3C"))
 	redStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("#ff3c3c"))
 	blueStyle       = lipgloss.NewStyle().Foreground(lipgloss.Color("#5858fd"))
 )
@@ -27,8 +29,7 @@ func (m model) View() string {
 	view += m.ColumnView()
 
 	// The footer
-
-	view += "\n" + m.selected.Title + "\n(" + m.selected.Href + ")\n" + helpStyle.Render("click to open/<c> to copy url")
+	view += m.FooterView()
 
 	// Debug info
 	if os.Getenv("DEBUG") != "" {
@@ -42,6 +43,17 @@ func (m model) View() string {
 	view += strings.Repeat("\n", height) + helpView
 
 	// Send the UI for rendering
+	return view
+}
+
+func (m model) FooterView() string {
+	view := ""
+	view += "\n" + m.cursorStyle.Render(m.selected.Title)
+	view += "\n(" + m.selected.Href + ")\n"
+	view += helpDescStyle.Render("click to open")
+	view += helpSepStyle.Render(" • ")
+	view += helpKeyStyle.Render("c")
+	view += helpDescStyle.Render(" copy link")
 	return view
 }
 
@@ -87,6 +99,7 @@ func (m *model) ColumnView() string {
 						headlineStyle = blueStyle.Width(m.columnWidth)
 					}
 					if i == m.cursory && j == m.cursorx {
+						m.cursorStyle = headlineStyle
 						headlineStyle = headlineStyle.Bold(true)
 					}
 

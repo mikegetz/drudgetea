@@ -86,13 +86,14 @@ type model struct {
 	topHeadlines  []godrudge.Headline   // the top headlines, which are displayed above the main headlines left aligned
 
 	// view state
-	cursorx       int // the current column
-	cursory       int // the current row in the current column
-	curMaxRow     int // the max number of rows in the current column
-	width         int // width of the terminal
-	maxRows       int // represents the column with the most headlines
-	columnWidth   int // the width of each column
-	toggleRowLess int // toggle to expand column rows, value represents the max rows when toggled
+	cursorx       int            // the current column
+	cursory       int            // the current row in the current column
+	curMaxRow     int            // the max number of rows in the current column
+	width         int            // width of the terminal
+	maxRows       int            // represents the column with the most headlines
+	columnWidth   int            // the width of each column
+	toggleRowLess int            // toggle to expand column rows, value represents the max rows when toggled
+	cursorStyle   lipgloss.Style //current cursor style - remove when godrudge supports lipgloss styles
 
 	//controller state
 	selected   godrudge.Headline // the currently selected headline
