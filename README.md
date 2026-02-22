@@ -10,4 +10,4 @@ drudgetea
 DEBUG=true drudgetea
 ```
 
-<img width="1429" height="645" alt="2026-02-22-002444_hyprshot" src="https://github.com/user-attachments/assets/dc3e5202-e0a8-4a0a-9153-477b7e7dc280" />
+<img width="1793" height="871" alt="2026-02-22-133304_hyprshot" src="https://github.com/user-attachments/assets/77396bd2-6efd-45db-bcf1-1cb34346c17e" />
