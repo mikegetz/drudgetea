@@ -77,18 +77,19 @@ var keys = keyMap{
 }
 
 type model struct {
-	headlines  [][]godrudge.Headline // all headlines of drudge report
-	cursorx    int                   // the current column
-	cursory    int                   // the current row in the current column
-	curMaxRow  int                   // the max number of rows in the current column
-	width      int                   // width of the terminal
-	maxRows    int                   // represents the column with the most headlines
-	selected   godrudge.Headline     // the currently selected headline
-	keys       keyMap
-	help       help.Model
-	inputStyle lipgloss.Style
-	lastKey    string
-	quitting   bool
+	headlines   [][]godrudge.Headline // all headlines of drudge report
+	cursorx     int                   // the current column
+	cursory     int                   // the current row in the current column
+	curMaxRow   int                   // the max number of rows in the current column
+	width       int                   // width of the terminal
+	maxRows     int                   // represents the column with the most headlines
+	columnWidth int                   // the width of each column
+	selected    godrudge.Headline     // the currently selected headline
+	keys        keyMap                // the keybindings
+	help        help.Model            // the help view
+	inputStyle  lipgloss.Style        // style for debug info
+	lastKey     string                // the last key pressed, for debug purposes
+	quitting    bool                  // whether the application is quitting
 }
 
 func initialModel() model {
