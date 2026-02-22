@@ -19,16 +19,10 @@ func (m model) View() string {
 
 	view += "\n"
 
-	maxColumnSize := 0
-	for _, col := range m.headlines {
-		if len(col) > maxColumnSize {
-			maxColumnSize = len(col)
-		}
-	}
 	columnWidth := (m.width - (len(cs) * 2)) / len(m.headlines)
 
 	if columnWidth > 3 {
-		for i := 0; i < maxColumnSize; i++ {
+		for i := 0; i < m.maxRows; i++ {
 			for j, col := range m.headlines {
 				if i < len(col) {
 					var headlineStyle lipgloss.Style
