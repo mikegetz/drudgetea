@@ -41,7 +41,7 @@ func (m model) View() string {
 
 	// The help view
 	helpView := m.help.View(m.keys)
-	height := 3 - strings.Count(helpView, "\n")
+	height := 4 - strings.Count(helpView, "\n")
 
 	view += strings.Repeat("\n", height) + helpView
 
