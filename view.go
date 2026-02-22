@@ -11,6 +11,7 @@ import (
 var (
 	cs              = " | "
 	columnSeparator = lipgloss.NewStyle().Foreground(lipgloss.Color("#888888")).Render(cs)
+	helpStyle       = lipgloss.NewStyle().Foreground(lipgloss.Color("#4A4A4A"))
 	redStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("#ff3c3c"))
 	blueStyle       = lipgloss.NewStyle().Foreground(lipgloss.Color("#5858fd"))
 )
@@ -20,14 +21,14 @@ func (m model) View() string {
 
 	view := "\n"
 
-	view += m.TopHeadlineView() + "\n"
-	view += m.MainHeadlineView() + "\n"
+	view += m.TopHeadlineView()
+	view += m.MainHeadlineView()
 	view += centerStyle.Render(logo) + "\n"
 	view += m.ColumnView()
 
 	// The footer
 
-	view += "\n" + m.selected.Title + "\n(" + m.selected.Href + ")\n"
+	view += "\n" + m.selected.Title + "\n(" + m.selected.Href + ")\n" + helpStyle.Render("click to open/<c> to copy url")
 
 	// Debug info
 	if os.Getenv("DEBUG") != "" {
@@ -71,10 +72,12 @@ func (m model) MainHeadlineView() string {
 }
 
 func (m *model) ColumnView() string {
+	rows := m.curMaxRow
+
 	m.columnWidth = (m.width - (len(cs) * 2)) / len(m.headlines)
 	view := ""
 	if m.columnWidth > 3 {
-		for i := 0; i < m.maxRows; i++ {
+		for i := 0; i < rows; i++ {
 			for j, col := range m.headlines {
 				if i < len(col) {
 					var headlineStyle lipgloss.Style
@@ -84,7 +87,6 @@ func (m *model) ColumnView() string {
 						headlineStyle = blueStyle.Width(m.columnWidth)
 					}
 					if i == m.cursory && j == m.cursorx {
-						m.selected = col[i]
 						headlineStyle = headlineStyle.Bold(true)
 					}
 

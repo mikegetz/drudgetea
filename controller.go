@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -49,15 +50,44 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keys.Help):
 			m.help.ShowAll = !m.help.ShowAll
 
-		// the selected state for the item that the cursor is pointing at.
+		case key.Matches(msg, m.keys.Copy):
+			if m.selected.Href != "" {
+				return m, tea.Batch(copyToClipboardCmd(m.selected.Href))
+			}
+
+		// temporarily setting toggle for column expansion
 		case key.Matches(msg, m.keys.Select):
-			//TODO: load page?
+			if m.toggleRowLess == 0 {
+				m.toggleRowLess = 10
+			} else {
+				m.toggleRowLess = 0
+			}
 		}
 
 	}
 
-	m.curMaxRow = len(m.headlines[m.cursorx])
+	// Update the selected headline based on the new cursor position.
+	m.selected = m.headlines[m.cursorx][m.cursory]
+
+	// Track ColumnHeadline Row length for cursor movement and column expansion
+	if m.toggleRowLess == 0 {
+		m.curMaxRow = len(m.headlines[m.cursorx])
+	} else {
+		m.curMaxRow = m.toggleRowLess
+	}
+
 	// Return the updated model to the Bubble Tea runtime for processing.
 	// Note that we're not returning a command.
 	return m, nil
+}
+
+type clipboardMsg struct {
+	err error
+}
+
+func copyToClipboardCmd(s string) tea.Cmd {
+	return func() tea.Msg {
+		err := clipboard.WriteAll(s)
+		return clipboardMsg{err: err}
+	}
 }

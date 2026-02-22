@@ -15,9 +15,6 @@ import (
 //go:embed logo
 var logo string
 
-const ansiReset = "\033[0m"
-const ansiBold = "\033[1m"
-
 // keyMap defines a set of keybindings. To work for help it must satisfy
 // key.Map. It could also very easily be a map[string]key.Binding.
 type keyMap struct {
@@ -27,13 +24,14 @@ type keyMap struct {
 	Right  key.Binding
 	Help   key.Binding
 	Quit   key.Binding
+	Copy   key.Binding
 	Select key.Binding
 }
 
 // ShortHelp returns keybindings to be shown in the mini help view. It's part
 // of the key.Map interface.
 func (k keyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Help, k.Quit}
+	return []key.Binding{k.Select, k.Help, k.Quit}
 }
 
 // FullHelp returns keybindings for the expanded help view. It's part of the
@@ -41,7 +39,8 @@ func (k keyMap) ShortHelp() []key.Binding {
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		{k.Up, k.Down, k.Left, k.Right}, // first column
-		{k.Help, k.Quit},                // second column
+		{k.Select, k.Copy},              // second column
+		{k.Help, k.Quit},                // third column
 	}
 }
 
@@ -70,28 +69,38 @@ var keys = keyMap{
 		key.WithKeys("q", "esc", "ctrl+c"),
 		key.WithHelp("q", "quit"),
 	),
+	Copy: key.NewBinding(
+		key.WithKeys("c"),
+		key.WithHelp("c", "copy url"),
+	),
 	Select: key.NewBinding(
 		key.WithKeys("enter", " "),
-		key.WithHelp("enter/space", "select headline"),
+		key.WithHelp("space/enter", "toggle more rows"),
 	),
 }
 
 type model struct {
+	// data
 	headlines     [][]godrudge.Headline // all headlines of drudge report
 	mainHeadlines []godrudge.Headline   // the main headlines, which are displayed above the logo section
 	topHeadlines  []godrudge.Headline   // the top headlines, which are displayed above the main headlines left aligned
-	cursorx       int                   // the current column
-	cursory       int                   // the current row in the current column
-	curMaxRow     int                   // the max number of rows in the current column
-	width         int                   // width of the terminal
-	maxRows       int                   // represents the column with the most headlines
-	columnWidth   int                   // the width of each column
-	selected      godrudge.Headline     // the currently selected headline
-	keys          keyMap                // the keybindings
-	help          help.Model            // the help view
-	inputStyle    lipgloss.Style        // style for debug info
-	lastKey       string                // the last key pressed, for debug purposes
-	quitting      bool                  // whether the application is quitting
+
+	// view state
+	cursorx       int // the current column
+	cursory       int // the current row in the current column
+	curMaxRow     int // the max number of rows in the current column
+	width         int // width of the terminal
+	maxRows       int // represents the column with the most headlines
+	columnWidth   int // the width of each column
+	toggleRowLess int // toggle to expand column rows, value represents the max rows when toggled
+
+	//controller state
+	selected   godrudge.Headline // the currently selected headline
+	keys       keyMap            // the keybindings
+	help       help.Model        // the help view
+	inputStyle lipgloss.Style    // style for debug info
+	lastKey    string            // the last key pressed, for debug purposes
+	quitting   bool              // whether the application is quitting
 }
 
 func initialModel() model {
@@ -113,6 +122,7 @@ func initialModel() model {
 		headlines:     client.Page.HeadlineColumns,
 		mainHeadlines: client.Page.MainHeadlines,
 		topHeadlines:  client.Page.TopHeadlines,
+		toggleRowLess: 10,
 		maxRows:       maxRows,
 		keys:          keys,
 		help:          help.New(),
