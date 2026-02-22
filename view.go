@@ -11,13 +11,20 @@ import (
 var (
 	cs              = " | "
 	columnSeparator = lipgloss.NewStyle().Foreground(lipgloss.Color("#888888")).Render(cs)
-	redStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("#FF0000"))
-	blueStyle       = lipgloss.NewStyle().Foreground(lipgloss.Color("#3030fe"))
+	redStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("#ff3c3c"))
+	blueStyle       = lipgloss.NewStyle().Foreground(lipgloss.Color("#5858fd"))
 )
 
 func (m model) View() string {
 	centerStyle := lipgloss.NewStyle().Width(m.width).Align(lipgloss.Center)
-	view := centerStyle.Render(logo)
+
+	view := ""
+
+	view += m.MainHeadlineView()
+
+	view += "\n"
+
+	view += centerStyle.Render(logo)
 
 	view += "\n"
 
@@ -25,8 +32,9 @@ func (m model) View() string {
 
 	// The footer
 
-	view += "\n Selected: " + m.selected.Title + "\n(" + m.selected.Href + ")\n"
+	view += "\n" + m.selected.Title + "\n(" + m.selected.Href + ")\n"
 
+	// Debug info
 	if os.Getenv("DEBUG") != "" {
 		view += m.inputStyle.Render("Debug: "+fmt.Sprintf("cursorx: %d, cursory: %d, curMaxRow: %d, columnWidth: %d", m.cursorx, m.cursory, m.curMaxRow, m.columnWidth)) + "\n"
 	}
@@ -38,6 +46,19 @@ func (m model) View() string {
 	view += strings.Repeat("\n", height) + helpView
 
 	// Send the UI for rendering
+	return view
+}
+
+func (m model) MainHeadlineView() string {
+	view := ""
+	for _, mainHeadline := range m.mainHeadlines {
+		if mainHeadline.Color == "\033[31m" {
+			view += redStyle.Width(m.width).Align(lipgloss.Center).Render(mainHeadline.Title)
+		} else {
+			view += blueStyle.Width(m.width).Align(lipgloss.Center).Render(mainHeadline.Title)
+		}
+		view += "\n"
+	}
 	return view
 }
 
