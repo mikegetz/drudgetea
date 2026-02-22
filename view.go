@@ -11,6 +11,9 @@ import (
 var (
 	cs              = " | "
 	columnSeparator = lipgloss.NewStyle().Foreground(lipgloss.Color("#888888")).Render(cs)
+	helpDescStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("#4A4A4A"))
+	helpKeyStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("#626262"))
+	helpSepStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("#3C3C3C"))
 	redStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("#ff3c3c"))
 	blueStyle       = lipgloss.NewStyle().Foreground(lipgloss.Color("#5858fd"))
 )
@@ -18,21 +21,15 @@ var (
 func (m model) View() string {
 	centerStyle := lipgloss.NewStyle().Width(m.width).Align(lipgloss.Center)
 
-	view := ""
+	view := "\n"
 
+	view += m.TopHeadlineView()
 	view += m.MainHeadlineView()
-
-	view += "\n"
-
-	view += centerStyle.Render(logo)
-
-	view += "\n"
-
+	view += centerStyle.Render(logo) + "\n"
 	view += m.ColumnView()
 
 	// The footer
-
-	view += "\n" + m.selected.Title + "\n(" + m.selected.Href + ")\n"
+	view += m.FooterView()
 
 	// Debug info
 	if os.Getenv("DEBUG") != "" {
@@ -46,6 +43,30 @@ func (m model) View() string {
 	view += strings.Repeat("\n", height) + helpView
 
 	// Send the UI for rendering
+	return view
+}
+
+func (m model) FooterView() string {
+	view := ""
+	view += "\n" + m.cursorStyle.Render(m.selected.Title)
+	view += "\n(" + m.selected.Href + ")\n"
+	view += helpDescStyle.Render("click to open")
+	view += helpSepStyle.Render(" • ")
+	view += helpKeyStyle.Render("c")
+	view += helpDescStyle.Render(" copy link")
+	return view
+}
+
+func (m model) TopHeadlineView() string {
+	view := ""
+	for _, mainHeadline := range m.topHeadlines {
+		if mainHeadline.Color == "\033[31m" {
+			view += redStyle.Align(lipgloss.Left).Render(mainHeadline.Title)
+		} else {
+			view += blueStyle.Align(lipgloss.Left).Render(mainHeadline.Title)
+		}
+		view += "\n"
+	}
 	return view
 }
 
@@ -63,10 +84,12 @@ func (m model) MainHeadlineView() string {
 }
 
 func (m *model) ColumnView() string {
+	rows := m.curMaxRow
+
 	m.columnWidth = (m.width - (len(cs) * 2)) / len(m.headlines)
 	view := ""
 	if m.columnWidth > 3 {
-		for i := 0; i < m.maxRows; i++ {
+		for i := 0; i < rows; i++ {
 			for j, col := range m.headlines {
 				if i < len(col) {
 					var headlineStyle lipgloss.Style
@@ -76,7 +99,7 @@ func (m *model) ColumnView() string {
 						headlineStyle = blueStyle.Width(m.columnWidth)
 					}
 					if i == m.cursory && j == m.cursorx {
-						m.selected = col[i]
+						m.cursorStyle = headlineStyle
 						headlineStyle = headlineStyle.Bold(true)
 					}
 
