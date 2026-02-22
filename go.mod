@@ -3,6 +3,7 @@ module github.com/mikegetz/drudgetea
 go 1.25.0
 
 require (
+	github.com/charmbracelet/bubbles v1.0.0
 	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/mikegetz/godrudge v1.3.2
 )
