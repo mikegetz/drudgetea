@@ -3,10 +3,19 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
+
+	"github.com/charmbracelet/lipgloss"
 )
 
 func (m model) View() string {
-	line := logo + "\n"
+	centerStyle := lipgloss.NewStyle().Width(m.width).Align(lipgloss.Center)
+	redStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#FF0000"))
+	blueStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#3030fe"))
+
+	view := centerStyle.Render(logo)
+
+	view += "\n"
 
 	maxColumnSize := 0
 	for _, col := range m.headlines {
@@ -20,37 +29,47 @@ func (m model) View() string {
 		for i := 0; i < maxColumnSize; i++ {
 			for j, col := range m.headlines {
 				if i < len(col) {
+					var headlineStyle lipgloss.Style
+					if col[i].Color == "\033[31m" {
+						headlineStyle = redStyle.Width(columnWidth)
+					} else {
+						headlineStyle = blueStyle.Width(columnWidth)
+					}
 					if i == m.cursory && j == m.cursorx {
 						m.selected = col[i]
-						line += ansiBold
+						headlineStyle = headlineStyle.Bold(true)
 					}
 
 					if len(col[i].Title) > columnWidth {
-						line += fmt.Sprintf(string(col[i].Color)+"%-*.*s"+ansiReset, columnWidth, columnWidth, col[i].Title[:columnWidth-3]+"...")
+						view += headlineStyle.Render(col[i].Title[:columnWidth-3] + "...")
 					} else {
-						line += fmt.Sprintf(string(col[i].Color)+"%-*s"+ansiReset, columnWidth, col[i].Title)
+						view += headlineStyle.Render(col[i].Title)
 					}
 				} else {
-					line += fmt.Sprintf("%-*s", columnWidth, "")
+					view += strings.Repeat(" ", columnWidth)
 				}
 				if j < len(m.headlines)-1 {
-					line += " | "
+					view += " | "
 				}
 			}
-			line += "\n"
+			view += "\n"
 		}
 	}
 
 	// The footer
 
-	line += "\n Selected: " + m.selected.Title + "\n(" + m.selected.Href + ")\n"
+	view += "\n Selected: " + m.selected.Title + "\n(" + m.selected.Href + ")\n"
 
-	if len(os.Args) > 1 && os.Args[1] == "--debug" {
-		line += "Debug: " + fmt.Sprintf("cursorx: %d, cursory: %d, curMaxRow: %d", m.cursorx, m.cursory, m.curMaxRow) + "\n"
+	if os.Getenv("DEBUG") != "" {
+		view += m.inputStyle.Render("Debug: "+fmt.Sprintf("cursorx: %d, cursory: %d, curMaxRow: %d", m.cursorx, m.cursory, m.curMaxRow)) + "\n"
 	}
 
-	line += "\nPress q to quit.\n"
+	// The help view
+	helpView := m.help.View(m.keys)
+	height := 3 - strings.Count(helpView, "\n")
+
+	view += strings.Repeat("\n", height) + helpView
 
 	// Send the UI for rendering
-	return line
+	return view
 }

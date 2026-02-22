@@ -1,6 +1,9 @@
 package main
 
-import tea "github.com/charmbracelet/bubbletea"
+import (
+	"github.com/charmbracelet/bubbles/key"
+	tea "github.com/charmbracelet/bubbletea"
+)
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
@@ -12,14 +15,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 
 		// Cool, what was the actual key pressed?
-		switch msg.String() {
+		switch {
 
 		// These keys should exit the program.
-		case "ctrl+c", "q":
+		case key.Matches(msg, m.keys.Quit):
 			return m, tea.Quit
 
 		//The "left" and "h" keys move the cursor left
-		case "left", "h":
+		case key.Matches(msg, m.keys.Left):
 			if m.cursorx > 0 {
 				if (len(m.headlines[m.cursorx-1]) - 1) >= m.cursory {
 					m.cursorx--
@@ -27,7 +30,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		// The "right" and "l" keys move the cursor right
-		case "right", "l":
+		case key.Matches(msg, m.keys.Right):
 			if m.cursorx < len(m.headlines)-1 {
 				if (len(m.headlines[m.cursorx+1]) - 1) >= m.cursory {
 					m.cursorx++
@@ -35,20 +38,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		// The "up" and "k" keys move the cursor up
-		case "up", "k":
+		case key.Matches(msg, m.keys.Up):
 			if m.cursory > 0 {
 				m.cursory--
 			}
 
 		// The "down" and "j" keys move the cursor down
-		case "down", "j":
+		case key.Matches(msg, m.keys.Down):
 			if m.cursory < m.curMaxRow-1 {
 				m.cursory++
 			}
 
-		// The "enter" key and the spacebar (a literal space) toggle
+		case key.Matches(msg, m.keys.Help):
+			m.help.ShowAll = !m.help.ShowAll
+
 		// the selected state for the item that the cursor is pointing at.
-		case "enter", " ":
+		case key.Matches(msg, m.keys.Select):
 			//TODO: load page?
 		}
 

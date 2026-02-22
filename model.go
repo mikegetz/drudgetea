@@ -21,12 +21,13 @@ const ansiBold = "\033[1m"
 // keyMap defines a set of keybindings. To work for help it must satisfy
 // key.Map. It could also very easily be a map[string]key.Binding.
 type keyMap struct {
-	Up    key.Binding
-	Down  key.Binding
-	Left  key.Binding
-	Right key.Binding
-	Help  key.Binding
-	Quit  key.Binding
+	Up     key.Binding
+	Down   key.Binding
+	Left   key.Binding
+	Right  key.Binding
+	Help   key.Binding
+	Quit   key.Binding
+	Select key.Binding
 }
 
 // ShortHelp returns keybindings to be shown in the mini help view. It's part
@@ -69,6 +70,10 @@ var keys = keyMap{
 		key.WithKeys("q", "esc", "ctrl+c"),
 		key.WithHelp("q", "quit"),
 	),
+	Select: key.NewBinding(
+		key.WithKeys("enter", " "),
+		key.WithHelp("enter/space", "select headline"),
+	),
 }
 
 type model struct {
@@ -102,8 +107,11 @@ func initialModel() model {
 	}
 
 	model := model{
-		headlines: client.Page.HeadlineColumns,
-		maxRows:   maxRows,
+		headlines:  client.Page.HeadlineColumns,
+		maxRows:    maxRows,
+		keys:       keys,
+		help:       help.New(),
+		inputStyle: lipgloss.NewStyle().Foreground(lipgloss.Color("#FF75B7")),
 	}
 
 	return model
