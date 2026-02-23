@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"fmt"
 	"os"
+	"time"
 
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/bubbles/help"
@@ -101,9 +102,11 @@ var keys = keyMap{
 
 type model struct {
 	// data
+	client        *godrudge.Client
 	headlines     [][]godrudge.Headline // all headlines of drudge report
 	mainHeadlines []godrudge.Headline   // the main headlines, which are displayed above the logo section
 	topHeadlines  []godrudge.Headline   // the top headlines, which are displayed above the main headlines left aligned
+	time          time.Time             // last time of RSS feed fetch
 
 	// view state
 	cursorGroup      int            // the current column group (top, main, or headline columns)
@@ -143,6 +146,8 @@ func initialModel() model {
 	}
 
 	model := model{
+		client:        client,
+		time:          time.Now(),
 		headlines:     client.Page.HeadlineColumns,
 		mainHeadlines: client.Page.MainHeadlines,
 		topHeadlines:  client.Page.TopHeadlines,
@@ -159,6 +164,14 @@ func initialModel() model {
 }
 
 func (m model) Init() tea.Cmd {
-	// Just return `nil`, which means "no I/O right now, please."
-	return nil
+	return refresh(30 * time.Second)
+}
+
+type tickMsg time.Time
+
+func refresh(d time.Duration) tea.Cmd {
+	// tea.Tick schedules a single message after d.
+	return tea.Tick(d, func(t time.Time) tea.Msg {
+		return tickMsg(t)
+	})
 }

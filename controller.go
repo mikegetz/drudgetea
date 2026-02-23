@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
@@ -8,6 +10,11 @@ import (
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+
+	case tickMsg:
+		m.client.ParseRSS()
+		m.time = time.Now()
+		return m, refresh(30 * time.Second)
 
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
