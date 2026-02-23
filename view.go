@@ -12,9 +12,6 @@ import (
 var (
 	cs              = "  "
 	columnSeparator = lipgloss.NewStyle().Foreground(lipgloss.Color("#888888")).Render(cs)
-	helpDescStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("#4A4A4A"))
-	helpKeyStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("#626262"))
-	helpSepStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("#3C3C3C"))
 	redStyle        = linkgloss.New().Foreground(lipgloss.Color("#ff3c3c"))
 	blueStyle       = linkgloss.New().Foreground(lipgloss.Color("#5858fd"))
 )
