@@ -12,7 +12,6 @@ import (
 var (
 	cs             = "  "
 	containerStyle = lipgloss.NewStyle().Padding(0, 2)
-	borderColor    = lipgloss.NewStyle().Foreground(lipgloss.Color("#888888"))
 	redStyle       = linkgloss.New().Foreground(lipgloss.Color("#ff3c3c"))
 	blueStyle      = linkgloss.New().Foreground(lipgloss.Color("#5858fd"))
 )
