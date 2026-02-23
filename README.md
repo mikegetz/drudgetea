@@ -1,10 +1,23 @@
+# drudgetea
+A Bubble Tea implementation of https://github.com/mikegetz/drudge
 
-### Usage
+## Install
+### Shell
+#### curl
+```
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/mikegetz/drudgetea/main/tools/install.sh)"
+```
+#### wget
+```
+sh -c "$(wget -qO- https://raw.githubusercontent.com/mikegetz/drudgetea/main/tools/install.sh)"
+```
+
+## Usage
 
 ```
 drudgetea
 ```
-#### debug
+### debug
 
 ```
 DEBUG=true drudgetea
