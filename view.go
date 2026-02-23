@@ -51,10 +51,6 @@ func (m model) FooterView() string {
 	view := ""
 	view += "\n" + m.cursorStyle.UnsetAlign().UnsetWidth().Render(m.selected.Title)
 	view += "\n(" + m.selected.Href + ")\n"
-	view += helpDescStyle.Render("click to open")
-	view += helpSepStyle.Render(" • ")
-	view += helpKeyStyle.Render("c")
-	view += helpDescStyle.Render(" copy link")
 	return view
 }
 
