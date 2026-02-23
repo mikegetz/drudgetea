@@ -21,17 +21,21 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		//The "left" and "h" keys move the cursor left
 		case key.Matches(msg, m.keys.Left):
-			if m.cursorx > 0 {
-				if (len(m.headlines[m.cursorx-1]) - 1) >= m.cursory {
-					m.cursorx--
+			if m.cursorGroup == 2 {
+				if m.cursorx > 0 {
+					if (len(m.headlines[m.cursorx-1]) - 1) >= m.cursory {
+						m.cursorx--
+					}
 				}
 			}
 
 		// The "right" and "l" keys move the cursor right
 		case key.Matches(msg, m.keys.Right):
-			if m.cursorx < len(m.headlines)-1 {
-				if (len(m.headlines[m.cursorx+1]) - 1) >= m.cursory {
-					m.cursorx++
+			if m.cursorGroup == 2 {
+				if m.cursorx < len(m.headlines)-1 {
+					if (len(m.headlines[m.cursorx+1]) - 1) >= m.cursory {
+						m.cursorx++
+					}
 				}
 			}
 
@@ -47,16 +51,26 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursory++
 			}
 
+		// ? toggles the help view
 		case key.Matches(msg, m.keys.Help):
 			m.help.ShowAll = !m.help.ShowAll
 
+		// c copy to clipboard
 		case key.Matches(msg, m.keys.Copy):
 			if m.selected.Href != "" {
 				return m, tea.Batch(copyToClipboardCmd(m.selected.Href))
 			}
 
-		// temporarily setting toggle for column expansion
-		case key.Matches(msg, m.keys.Select):
+		// tab switches headline group
+		case key.Matches(msg, m.keys.Tab):
+			m.cursorGroup++
+			if m.cursorGroup > 2 {
+				m.cursorGroup = 0
+			}
+			m.cursory = 0
+
+		// space or enter toggles more or less rows
+		case key.Matches(msg, m.keys.Less):
 			if m.toggleRowLess == 0 {
 				m.toggleRowLess = 10
 			} else {
@@ -67,15 +81,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	// Update the selected headline based on the new cursor position.
-	m.selected = m.headlines[m.cursorx][m.cursory]
-
 	// Track ColumnHeadline Row length for cursor movement and column expansion
-	if m.toggleRowLess == 0 {
-		m.curMaxRow = len(m.headlines[m.cursorx])
-	} else {
-		m.curMaxRow = m.toggleRowLess
+	switch m.cursorGroup {
+	case 0:
+		m.selected = m.topHeadlines[m.cursory]
+		m.curMaxRow = len(m.topHeadlines)
+	case 1:
+		m.selected = m.mainHeadlines[m.cursory]
+		m.curMaxRow = len(m.mainHeadlines)
+	case 2:
+		m.selected = m.headlines[m.cursorx][m.cursory]
+		if m.toggleRowLess == 0 {
+			m.curMaxRow = len(m.headlines[m.cursorx])
+		} else {
+			m.curMaxRow = m.toggleRowLess
+		}
 	}
-
 	// Return the updated model to the Bubble Tea runtime for processing.
 	// Note that we're not returning a command.
 	return m, nil
