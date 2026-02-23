@@ -73,7 +73,7 @@ func (m *model) TopHeadlineView() string {
 			headlineStyle = headlineStyle.Bold(true)
 		}
 
-		view += headlineStyle.Render(mainHeadline.Title)
+		view += headlineStyle.Href(mainHeadline.Href).Render(mainHeadline.Title)
 		view += "\n"
 	}
 	return view
@@ -94,7 +94,7 @@ func (m *model) MainHeadlineView() string {
 			headlineStyle = headlineStyle.Bold(true)
 		}
 
-		view += headlineStyle.Render(mainHeadline.Title)
+		view += headlineStyle.Href(mainHeadline.Href).Render(mainHeadline.Title)
 		view += "\n"
 	}
 	return view
