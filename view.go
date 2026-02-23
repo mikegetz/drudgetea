@@ -10,11 +10,11 @@ import (
 )
 
 var (
-	cs              = "  "
-	containerStyle  = lipgloss.NewStyle().Padding(0, 2)
-	columnSeparator = lipgloss.NewStyle().Foreground(lipgloss.Color("#888888")).Render(cs)
-	redStyle        = linkgloss.New().Foreground(lipgloss.Color("#ff3c3c"))
-	blueStyle       = linkgloss.New().Foreground(lipgloss.Color("#5858fd"))
+	cs             = "  "
+	containerStyle = lipgloss.NewStyle().Padding(0, 2)
+	borderColor    = lipgloss.NewStyle().Foreground(lipgloss.Color("#888888"))
+	redStyle       = linkgloss.New().Foreground(lipgloss.Color("#ff3c3c"))
+	blueStyle      = linkgloss.New().Foreground(lipgloss.Color("#5858fd"))
 )
 
 func (m model) View() string {
@@ -30,25 +30,28 @@ func (m model) View() string {
 	// The footer
 	view += m.FooterView()
 
-	// Debug info
-	if os.Getenv("DEBUG") != "" {
-		view += m.inputStyle.Render("Debug: "+fmt.Sprintf("cursorx: %d, cursory: %d, curMaxRow: %d, columnWidth: %d", m.cursorx, m.cursory, m.curMaxRow, m.columnWidth)) + "\n"
-	}
-
 	// The help view
 	helpView := m.help.View(m.keys)
 	height := 4 - strings.Count(helpView, "\n")
 
-	view += strings.Repeat("\n", height) + helpView
+	view += strings.Repeat("\n", height) + helpView + "\n"
 
 	// Send the UI for rendering
 	return containerStyle.Render(view)
 }
 
 func (m model) FooterView() string {
-	view := ""
-	view += "\n" + m.cursorStyle.UnsetAlign().UnsetWidth().Render(m.selected.Title)
-	view += "\n(" + m.selected.Href + ")\n"
+	footerStyleColor := m.cursorStyle.UnsetAlign().UnsetWidth()
+	footerStyleBorder := lipgloss.NewStyle().Border(lipgloss.RoundedBorder(), true).BorderForeground(lipgloss.Color("#888888")).Width((m.columnWidth * 3))
+
+	// Debug info
+	var debug string
+	if os.Getenv("DEBUG") != "" {
+		debug = m.inputStyle.Render("Debug: " + fmt.Sprintf("cursorx: %d, cursory: %d, curMaxRow: %d, columnWidth: %d", m.cursorx, m.cursory, m.curMaxRow, m.columnWidth))
+	}
+
+	view := "\n" + footerStyleBorder.Render(footerStyleColor.Render(m.selected.Title)+"\n("+m.selected.Href+")\n"+debug)
+
 	return view
 }
 
@@ -114,7 +117,7 @@ func (m *model) ColumnView() string {
 					view += strings.Repeat(" ", m.columnWidth)
 				}
 				if j < len(m.headlines)-1 {
-					view += columnSeparator
+					view += cs
 				}
 			}
 			view += "\n"
