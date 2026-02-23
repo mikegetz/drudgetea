@@ -56,20 +56,15 @@ func (m model) FooterView() string {
 
 func (m *model) TopHeadlineView() string {
 	view := ""
-	for i, mainHeadline := range m.topHeadlines {
-		var headlineStyle linkgloss.Style
-		if mainHeadline.Color == "\033[31m" {
-			headlineStyle = redStyle.Align(lipgloss.Left).Width(m.width)
-		} else {
-			headlineStyle = blueStyle.Align(lipgloss.Left).Width(m.width)
-		}
+	for i, topHeadline := range m.topHeadlines {
+		headlineStyle := m.TopHeadlineStyle(string(topHeadline.Color))
 
 		if m.cursorGroup == 0 && i == m.cursory {
 			m.cursorStyle = headlineStyle
 			headlineStyle = headlineStyle.Bold(true)
 		}
 
-		view += headlineStyle.Href(mainHeadline.Href).Render(mainHeadline.Title)
+		view += headlineStyle.Href(topHeadline.Href).Render(topHeadline.Title)
 		view += "\n"
 	}
 	return view
@@ -78,12 +73,7 @@ func (m *model) TopHeadlineView() string {
 func (m *model) MainHeadlineView() string {
 	view := ""
 	for i, mainHeadline := range m.mainHeadlines {
-		var headlineStyle linkgloss.Style
-		if mainHeadline.Color == "\033[31m" {
-			headlineStyle = redStyle.Width(m.width).Align(lipgloss.Center)
-		} else {
-			headlineStyle = blueStyle.Width(m.width).Align(lipgloss.Center)
-		}
+		var headlineStyle = m.MainHeadlineStyle(string(mainHeadline.Color))
 
 		if m.cursorGroup == 1 && i == m.cursory {
 			m.cursorStyle = headlineStyle
@@ -110,12 +100,7 @@ func (m *model) ColumnView() string {
 		for i := 0; i < rows; i++ {
 			for j, col := range m.headlines {
 				if i < len(col) {
-					var headlineStyle linkgloss.Style
-					if col[i].Color == "\033[31m" {
-						headlineStyle = redStyle.Width(m.columnWidth)
-					} else {
-						headlineStyle = blueStyle.Width(m.columnWidth)
-					}
+					headlineStyle := m.HeadlineColumnStyle(string(col[i].Color))
 
 					if i == m.cursory && j == m.cursorx && m.cursorGroup == 2 {
 						m.cursorStyle = headlineStyle
@@ -138,4 +123,34 @@ func (m *model) ColumnView() string {
 		}
 	}
 	return view
+}
+
+func (m model) HeadlineColumnStyle(color string) linkgloss.Style {
+	var headlineStyle linkgloss.Style
+	if color == "\033[31m" {
+		headlineStyle = redStyle.Width(m.columnWidth)
+	} else {
+		headlineStyle = blueStyle.Width(m.columnWidth)
+	}
+	return headlineStyle
+}
+
+func (m model) MainHeadlineStyle(color string) linkgloss.Style {
+	var headlineStyle linkgloss.Style
+	if color == "\033[31m" {
+		headlineStyle = redStyle.Width(m.width).Align(lipgloss.Center)
+	} else {
+		headlineStyle = blueStyle.Width(m.width).Align(lipgloss.Center)
+	}
+	return headlineStyle
+}
+
+func (m model) TopHeadlineStyle(color string) linkgloss.Style {
+	var headlineStyle linkgloss.Style
+	if color == "\033[31m" {
+		headlineStyle = redStyle.Width(m.width).Align(lipgloss.Left)
+	} else {
+		headlineStyle = blueStyle.Width(m.width).Align(lipgloss.Left)
+	}
+	return headlineStyle
 }
