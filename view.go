@@ -11,6 +11,7 @@ import (
 
 var (
 	cs              = "  "
+	containerStyle  = lipgloss.NewStyle().Padding(0, 2)
 	columnSeparator = lipgloss.NewStyle().Foreground(lipgloss.Color("#888888")).Render(cs)
 	redStyle        = linkgloss.New().Foreground(lipgloss.Color("#ff3c3c"))
 	blueStyle       = linkgloss.New().Foreground(lipgloss.Color("#5858fd"))
@@ -41,7 +42,7 @@ func (m model) View() string {
 	view += strings.Repeat("\n", height) + helpView
 
 	// Send the UI for rendering
-	return view
+	return containerStyle.Render(view)
 }
 
 func (m model) FooterView() string {
@@ -105,7 +106,7 @@ func (m *model) ColumnView() string {
 					}
 
 					if len(col[i].Title) > m.columnWidth {
-						view += headlineStyle.Href(col[i].Href).Render(col[i].Title[:m.columnWidth-3] + "...")
+						view += headlineStyle.Href(col[i].Href).Render(col[i].Title[:m.columnWidth-5] + "...")
 					} else {
 						view += headlineStyle.Href(col[i].Href).Render(col[i].Title)
 					}
