@@ -23,7 +23,13 @@ func (m model) View() string {
 
 	view += m.TopHeadlineView()
 	view += m.MainHeadlineView()
-	view += centerStyle.Render(logo) + "\n"
+
+	if m.showLogo {
+		view += centerStyle.Render(logo) + "\n"
+	} else {
+		view += "\n"
+	}
+
 	view += m.ColumnView()
 
 	// The footer

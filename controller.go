@@ -69,6 +69,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			m.cursory = 0
 
+		// l toggles ascii art logo
+		case key.Matches(msg, m.keys.ShowLogo):
+			m.showLogo = !m.showLogo
+
 		// space or enter toggles more or less rows
 		case key.Matches(msg, m.keys.Less):
 			if m.toggleRowLess == 0 {

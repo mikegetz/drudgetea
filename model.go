@@ -19,16 +19,17 @@ var logo string
 // keyMap defines a set of keybindings. To work for help it must satisfy
 // key.Map. It could also very easily be a map[string]key.Binding.
 type keyMap struct {
-	Up      key.Binding
-	Down    key.Binding
-	Left    key.Binding
-	Right   key.Binding
-	Help    key.Binding
-	Quit    key.Binding
-	Copy    key.Binding
-	Less    key.Binding
-	Tab     key.Binding
-	Version key.Binding
+	Up       key.Binding
+	Down     key.Binding
+	Left     key.Binding
+	Right    key.Binding
+	Help     key.Binding
+	Quit     key.Binding
+	Copy     key.Binding
+	ShowLogo key.Binding
+	Less     key.Binding
+	Tab      key.Binding
+	Version  key.Binding
 }
 
 // ShortHelp returns keybindings to be shown in the mini help view. It's part
@@ -41,9 +42,9 @@ func (k keyMap) ShortHelp() []key.Binding {
 // key.Map interface.
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.Up, k.Down, k.Left, k.Right}, // first column
-		{k.Less, k.Tab, k.Copy},         // second column
-		{k.Help, k.Quit, keys.Version},  // third column
+		{k.Up, k.Down, k.Left, k.Right},     // first column
+		{k.Less, k.Tab, k.ShowLogo, k.Copy}, // second column
+		{k.Help, k.Quit, keys.Version},      // third column
 	}
 }
 
@@ -84,6 +85,10 @@ var keys = keyMap{
 		key.WithKeys("tab"),
 		key.WithHelp("tab", "toggle headline group"),
 	),
+	ShowLogo: key.NewBinding(
+		key.WithKeys("L"),
+		key.WithHelp("L", "toggle ascii art logo"),
+	),
 	Version: key.NewBinding(
 		key.WithKeys("v"),
 		key.WithHelp("", "\nVersion: "+Version),
@@ -105,6 +110,7 @@ type model struct {
 	maxRows       int             // represents the column with the most headlines
 	columnWidth   int             // the width of each column
 	toggleRowLess int             // toggle to expand column rows, value represents the max rows when toggled
+	showLogo      bool            // whether to show the ascii art logo
 	cursorStyle   linkgloss.Style //current cursor style - remove when godrudge supports lipgloss styles
 
 	//controller state
@@ -137,6 +143,7 @@ func initialModel() model {
 		topHeadlines:  client.Page.TopHeadlines,
 		toggleRowLess: 10,
 		cursorGroup:   1,
+		showLogo:      true,
 		maxRows:       maxRows,
 		keys:          keys,
 		help:          help.New(),
