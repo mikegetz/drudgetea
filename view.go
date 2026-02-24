@@ -73,6 +73,7 @@ func (m *model) TopHeadlineView() string {
 		view += headlineStyle.Href(topHeadline.Href).Render(topHeadline.Title)
 		view += "\n"
 	}
+	view += "\n"
 	return view
 }
 
