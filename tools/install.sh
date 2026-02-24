@@ -54,7 +54,7 @@ sudo mv "$BIN_NAME" "$INSTALL_DIR/$BIN_NAME"
 
 # Verify installation
 if command -v "$BIN_NAME" >/dev/null 2>&1; then
-    echo "✅ Installation complete! Run '$BIN_NAME -v' to verify."
+    echo "✅ Installation complete! Run '$BIN_NAME' to verify."
 else
     echo "⚠️ Installation failed. Please check permissions."
 fi
