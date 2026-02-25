@@ -14,10 +14,14 @@ func hyperlink(url, text string) string {
 
 type Style struct {
 	lipgloss.Style
-	url string
+	url      string
+	disabled bool
 }
 
-func New() Style {
+func New(s ...lipgloss.Style) Style {
+	if len(s) > 0 {
+		return Style{Style: s[0]}
+	}
 	return Style{Style: lipgloss.NewStyle()}
 }
 
@@ -52,8 +56,13 @@ func (s Style) Underline(v bool) Style {
 }
 
 // the linkgloss
-func (s Style) Href(url string) Style {
+func (s Style) URL(url string) Style {
 	s.url = url
+	return s
+}
+
+func (s Style) UnsetURL() Style {
+	s.url = ""
 	return s
 }
 

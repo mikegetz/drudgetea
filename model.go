@@ -19,17 +19,18 @@ var logo string
 // keyMap defines a set of keybindings. To work for help it must satisfy
 // key.Map. It could also very easily be a map[string]key.Binding.
 type keyMap struct {
-	Up       key.Binding
-	Down     key.Binding
-	Left     key.Binding
-	Right    key.Binding
-	Help     key.Binding
-	Quit     key.Binding
-	Copy     key.Binding
-	ShowLogo key.Binding
-	Less     key.Binding
-	Tab      key.Binding
-	Version  key.Binding
+	Up           key.Binding
+	Down         key.Binding
+	Left         key.Binding
+	Right        key.Binding
+	Help         key.Binding
+	Quit         key.Binding
+	Copy         key.Binding
+	ShowLogo     key.Binding
+	Less         key.Binding
+	Tab          key.Binding
+	Version      key.Binding
+	DisableLinks key.Binding
 }
 
 // ShortHelp returns keybindings to be shown in the mini help view. It's part
@@ -42,9 +43,9 @@ func (k keyMap) ShortHelp() []key.Binding {
 // key.Map interface.
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.Up, k.Down, k.Left, k.Right},     // first column
-		{k.Less, k.Tab, k.ShowLogo, k.Copy}, // second column
-		{k.Help, k.Quit, keys.Version},      // third column
+		{k.Up, k.Down, k.Left, k.Right},                   // first column
+		{k.Less, k.Tab, k.ShowLogo, k.Copy},               // second column
+		{k.Help, k.Quit, keys.DisableLinks, keys.Version}, // third column
 	}
 }
 
@@ -93,6 +94,10 @@ var keys = keyMap{
 		key.WithKeys("v"),
 		key.WithHelp("", "\nVersion: "+Version),
 	),
+	DisableLinks: key.NewBinding(
+		key.WithKeys("d"),
+		key.WithHelp("d", "toggle links"),
+	),
 }
 
 type model struct {
@@ -102,16 +107,17 @@ type model struct {
 	topHeadlines  []godrudge.Headline   // the top headlines, which are displayed above the main headlines left aligned
 
 	// view state
-	cursorGroup   int             // the current column group (top, main, or headline columns)
-	cursorx       int             // the current column
-	cursory       int             // the current row in the current column
-	curMaxRow     int             // the max number of rows in the current column
-	width         int             // width of the terminal
-	maxRows       int             // represents the column with the most headlines
-	columnWidth   int             // the width of each column
-	toggleRowLess int             // toggle to expand column rows, value represents the max rows when toggled
-	showLogo      bool            // whether to show the ascii art logo
-	cursorStyle   linkgloss.Style //current cursor style - remove when godrudge supports lipgloss styles
+	cursorGroup      int             // the current column group (top, main, or headline columns)
+	cursorx          int             // the current column
+	cursory          int             // the current row in the current column
+	curMaxRow        int             // the max number of rows in the current column
+	width            int             // width of the terminal
+	maxRows          int             // represents the column with the most headlines
+	columnWidth      int             // the width of each column
+	toggleRowLess    int             // toggle to expand column rows, value represents the max rows when toggled
+	showLogo         bool            // whether to show the ascii art logo
+	cursorStyle      linkgloss.Style //current cursor style - remove when godrudge supports lipgloss styles
+	disableLinkgloss bool            // whether to disable linkgloss styles, for better compatibility with terminals that don't support them
 
 	//controller state
 	selected   godrudge.Headline // the currently selected headline
