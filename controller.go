@@ -57,8 +57,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// c copy to clipboard
 		case key.Matches(msg, m.keys.Copy):
-			if m.selected.Href != "" {
-				return m, tea.Batch(copyToClipboardCmd(m.selected.Href))
+			if m.selected.URL != "" {
+				return m, tea.Batch(copyToClipboardCmd(m.selected.URL))
 			}
 
 		// tab switches headline group
@@ -80,6 +80,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.toggleRowLess = 0
 			}
+
+		// d toggles linkgloss hyperlinks
+		case key.Matches(msg, m.keys.DisableLinks):
+			m.disableLinkgloss = !m.disableLinkgloss
 		}
 
 	}
