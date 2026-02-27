@@ -49,7 +49,7 @@ func (m model) FooterView() string {
 	// Debug info
 	var debug string
 	if os.Getenv("DEBUG") != "" {
-		debug = m.inputStyle.Render("Debug: " + fmt.Sprintf("cursorx: %d, cursory: %d, curMaxRow: %d, columnWidth: %d, disableLinkgloss: %t", m.cursorx, m.cursory, m.curMaxRow, m.columnWidth, m.disableLinkgloss))
+		debug = m.inputStyle.Render("Debug: " + fmt.Sprintf("cursorx: %d, cursory: %d, curMaxRow: %d, columnWidth: %d, disableLinkgloss: %t, time: %s", m.cursorx, m.cursory, m.curMaxRow, m.columnWidth, m.disableLinkgloss, m.time.Format("15:04:05")))
 	}
 
 	view := "\n" + footerStyleBorder.Render(footerStyleColor.Render(m.selected.Title)+"\n("+m.selected.URL+")\n"+debug)
