@@ -59,7 +59,7 @@ func (m model) FooterView() string {
 
 func (m *model) TopHeadlineView() string {
 	view := ""
-	for i, topHeadline := range m.topHeadlines {
+	for i, topHeadline := range m.client.Page.TopHeadlines {
 		headlineStyle := topHeadline.Style.Width(m.width).Align(lipgloss.Left).Hyperlink(topHeadline.URL)
 
 		if m.disableLinkgloss {
@@ -80,7 +80,7 @@ func (m *model) TopHeadlineView() string {
 
 func (m *model) MainHeadlineView() string {
 	view := ""
-	for i, mainHeadline := range m.mainHeadlines {
+	for i, mainHeadline := range m.client.Page.MainHeadlines {
 		var headlineStyle = mainHeadline.Style.Width(m.width).Align(lipgloss.Center).Hyperlink(mainHeadline.URL)
 
 		if m.disableLinkgloss {
@@ -106,11 +106,11 @@ func (m *model) ColumnView() string {
 		rows = m.maxRows
 	}
 
-	m.columnWidth = (m.width - (len(cs) * 2)) / len(m.headlines)
+	m.columnWidth = (m.width - (len(cs) * 2)) / len(m.client.Page.HeadlineColumns)
 	view := ""
 	if m.columnWidth > 3 {
 		for i := 0; i < rows; i++ {
-			for j, col := range m.headlines {
+			for j, col := range m.client.Page.HeadlineColumns {
 				if i < len(col) {
 					headlineStyle := col[i].Style.Width(m.columnWidth).Hyperlink(col[i].URL)
 
@@ -131,7 +131,7 @@ func (m *model) ColumnView() string {
 				} else {
 					view += strings.Repeat(" ", m.columnWidth)
 				}
-				if j < len(m.headlines)-1 {
+				if j < len(m.client.Page.HeadlineColumns)-1 {
 					view += cs
 				}
 			}

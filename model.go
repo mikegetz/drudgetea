@@ -102,11 +102,8 @@ var keys = keyMap{
 
 type model struct {
 	// data
-	client        *godrudge.Client
-	headlines     [][]godrudge.Headline // all headlines of drudge report
-	mainHeadlines []godrudge.Headline   // the main headlines, which are displayed above the logo section
-	topHeadlines  []godrudge.Headline   // the top headlines, which are displayed above the main headlines left aligned
-	time          time.Time             // last time of RSS feed fetch
+	client *godrudge.Client
+	time   time.Time // last time of RSS feed fetch
 
 	// view state
 	cursorGroup      int            // the current column group (top, main, or headline columns)
@@ -138,19 +135,11 @@ func initialModel() model {
 		os.Exit(1)
 	}
 
-	maxRows := 0
-	for _, col := range client.Page.HeadlineColumns {
-		if len(col) > maxRows {
-			maxRows = len(col)
-		}
-	}
+	maxRows := refreshMaxRows(client)
 
 	model := model{
 		client:        client,
 		time:          time.Now(),
-		headlines:     client.Page.HeadlineColumns,
-		mainHeadlines: client.Page.MainHeadlines,
-		topHeadlines:  client.Page.TopHeadlines,
 		toggleRowLess: 10,
 		cursorGroup:   1,
 		showLogo:      true,
@@ -161,6 +150,16 @@ func initialModel() model {
 	}
 
 	return model
+}
+
+func refreshMaxRows(client *godrudge.Client) int {
+	maxRows := 0
+	for _, col := range client.Page.HeadlineColumns {
+		if len(col) > maxRows {
+			maxRows = len(col)
+		}
+	}
+	return maxRows
 }
 
 func (m model) Init() tea.Cmd {
