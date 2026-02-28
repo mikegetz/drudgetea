@@ -5,11 +5,10 @@ import (
 	"fmt"
 	"os"
 
+	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
-	"github.com/mikegetz/drudgetea/linkgloss"
 	"github.com/mikegetz/godrudge"
 )
 
@@ -107,17 +106,17 @@ type model struct {
 	topHeadlines  []godrudge.Headline   // the top headlines, which are displayed above the main headlines left aligned
 
 	// view state
-	cursorGroup      int             // the current column group (top, main, or headline columns)
-	cursorx          int             // the current column
-	cursory          int             // the current row in the current column
-	curMaxRow        int             // the max number of rows in the current column
-	width            int             // width of the terminal
-	maxRows          int             // represents the column with the most headlines
-	columnWidth      int             // the width of each column
-	toggleRowLess    int             // toggle to expand column rows, value represents the max rows when toggled
-	showLogo         bool            // whether to show the ascii art logo
-	cursorStyle      linkgloss.Style //current cursor style - remove when godrudge supports lipgloss styles
-	disableLinkgloss bool            // whether to disable linkgloss styles, for better compatibility with terminals that don't support them
+	cursorGroup      int            // the current column group (top, main, or headline columns)
+	cursorx          int            // the current column
+	cursory          int            // the current row in the current column
+	curMaxRow        int            // the max number of rows in the current column
+	width            int            // width of the terminal
+	maxRows          int            // represents the column with the most headlines
+	columnWidth      int            // the width of each column
+	toggleRowLess    int            // toggle to expand column rows, value represents the max rows when toggled
+	showLogo         bool           // whether to show the ascii art logo
+	cursorStyle      lipgloss.Style //current cursor style - remove when godrudge supports lipgloss styles
+	disableLinkgloss bool           // whether to disable linkgloss styles, for better compatibility with terminals that don't support them
 
 	//controller state
 	selected   godrudge.Headline // the currently selected headline
