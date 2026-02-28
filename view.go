@@ -5,8 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/charmbracelet/lipgloss"
-	"github.com/mikegetz/drudgetea/linkgloss"
+	"charm.land/lipgloss/v2"
 )
 
 var (
@@ -61,10 +60,10 @@ func (m model) FooterView() string {
 func (m *model) TopHeadlineView() string {
 	view := ""
 	for i, topHeadline := range m.topHeadlines {
-		headlineStyle := linkgloss.New(topHeadline.Style).Width(m.width).Align(lipgloss.Left).URL(topHeadline.URL)
+		headlineStyle := topHeadline.Style.Width(m.width).Align(lipgloss.Left).Hyperlink(topHeadline.URL)
 
 		if m.disableLinkgloss {
-			headlineStyle = headlineStyle.UnsetURL()
+			headlineStyle = headlineStyle.UnsetHyperlink()
 		}
 
 		if m.cursorGroup == 0 && i == m.cursory {
@@ -82,10 +81,10 @@ func (m *model) TopHeadlineView() string {
 func (m *model) MainHeadlineView() string {
 	view := ""
 	for i, mainHeadline := range m.mainHeadlines {
-		var headlineStyle = linkgloss.New(mainHeadline.Style).Width(m.width).Align(lipgloss.Center).URL(mainHeadline.URL)
+		var headlineStyle = mainHeadline.Style.Width(m.width).Align(lipgloss.Center).Hyperlink(mainHeadline.URL)
 
 		if m.disableLinkgloss {
-			headlineStyle = headlineStyle.UnsetURL()
+			headlineStyle = headlineStyle.UnsetHyperlink()
 		}
 
 		if m.cursorGroup == 1 && i == m.cursory {
@@ -113,10 +112,10 @@ func (m *model) ColumnView() string {
 		for i := 0; i < rows; i++ {
 			for j, col := range m.headlines {
 				if i < len(col) {
-					headlineStyle := linkgloss.New(col[i].Style).Width(m.columnWidth).URL(col[i].URL)
+					headlineStyle := col[i].Style.Width(m.columnWidth).Hyperlink(col[i].URL)
 
 					if m.disableLinkgloss {
-						headlineStyle = headlineStyle.UnsetURL()
+						headlineStyle = headlineStyle.UnsetHyperlink()
 					}
 
 					if i == m.cursory && j == m.cursorx && m.cursorGroup == 2 {
