@@ -175,10 +175,17 @@ func refreshMaxRows(client *godrudge.Client) int {
 }
 
 func (m model) Init() tea.Cmd {
-	return tea.Batch(refresh(30*time.Second), tea.RequestBackgroundColor)
+	return tea.Batch(refresh(30*time.Second), clockTick(), tea.RequestBackgroundColor)
 }
 
 type tickMsg time.Time
+type clockTickMsg struct{}
+
+func clockTick() tea.Cmd {
+	return tea.Tick(time.Second, func(time.Time) tea.Msg {
+		return clockTickMsg{}
+	})
+}
 
 func refresh(d time.Duration) tea.Cmd {
 	// tea.Tick schedules a single message after d.

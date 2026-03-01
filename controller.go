@@ -5,8 +5,8 @@ import (
 
 	"charm.land/bubbles/v2/help"
 	"charm.land/bubbles/v2/key"
-	"github.com/atotto/clipboard"
 	tea "charm.land/bubbletea/v2"
+	"github.com/atotto/clipboard"
 )
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -15,6 +15,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.BackgroundColorMsg:
 		m.help.Styles = help.DefaultStyles(msg.IsDark())
+
+	case clockTickMsg:
+		return m, clockTick()
 
 	case tickMsg:
 		if !m.refreshEnabled {
@@ -105,7 +108,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keys.ToggleRefresh):
 			m.refreshEnabled = !m.refreshEnabled
 			if m.refreshEnabled {
-				return m, refresh(30 * time.Second)
+				return m, refresh(time.Second)
 			}
 		}
 
