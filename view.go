@@ -33,7 +33,7 @@ func (m model) View() string {
 	view += m.FooterView()
 
 	// The help view
-	m.help.Width = m.width - 4
+	m.help.SetWidth(m.width - 4)
 	helpView := m.help.View(m.keys)
 	height := 4 - strings.Count(helpView, "\n")
 

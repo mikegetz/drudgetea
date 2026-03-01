@@ -3,14 +3,15 @@ module github.com/mikegetz/drudgetea
 go 1.26.0
 
 require (
+	charm.land/bubbles/v2 v2.0.0
 	charm.land/lipgloss/v2 v2.0.0
 	github.com/atotto/clipboard v0.1.4
-	github.com/charmbracelet/bubbles v1.0.0
 	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/mikegetz/godrudge v1.6.3
 )
 
 require (
+	charm.land/bubbletea/v2 v2.0.0 // indirect
 	github.com/PuerkitoBio/goquery v1.11.0 // indirect
 	github.com/andybalholm/cascadia v1.3.3 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect

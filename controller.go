@@ -3,8 +3,8 @@ package main
 import (
 	"time"
 
+	"charm.land/bubbles/v2/key"
 	"github.com/atotto/clipboard"
-	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 )
 

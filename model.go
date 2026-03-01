@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
+	"charm.land/bubbles/v2/help"
+	"charm.land/bubbles/v2/key"
 	"charm.land/lipgloss/v2"
-	"github.com/charmbracelet/bubbles/help"
-	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/mikegetz/godrudge"
 )
@@ -145,6 +145,9 @@ func initialModel() model {
 
 	maxRows := refreshMaxRows(client)
 
+	h := help.New()
+	h.Styles = help.DefaultDarkStyles()
+
 	model := model{
 		client:         client,
 		time:           time.Now(),
@@ -153,7 +156,7 @@ func initialModel() model {
 		showLogo:       true,
 		maxRows:        maxRows,
 		keys:           keys,
-		help:           help.New(),
+		help:           h,
 		inputStyle:     lipgloss.NewStyle().Foreground(lipgloss.Color("#FF75B7")),
 		refreshEnabled: true,
 	}
