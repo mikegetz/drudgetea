@@ -59,6 +59,8 @@ github.com/mikegetz/godrudge v1.6.0 h1:zRorgprRDI7xAQN+EHeAVJ2oJGnXVFNEmB3Br9Y5U
 github.com/mikegetz/godrudge v1.6.0/go.mod h1:PtYab2ngxSZlollEZf3j9AoBL26ZcXeLNCwVix52tNY=
 github.com/mikegetz/godrudge v1.6.1 h1:GQL6fDtSbVo+XrUSh0kqtMp070Z/HdULzNVcUKZJ4NA=
 github.com/mikegetz/godrudge v1.6.1/go.mod h1:PtYab2ngxSZlollEZf3j9AoBL26ZcXeLNCwVix52tNY=
+github.com/mikegetz/godrudge v1.6.2 h1:Fk2rdto/J2I2YLI/fX4QnMenREjn0q+krVJTNGVYvvA=
+github.com/mikegetz/godrudge v1.6.2/go.mod h1:PtYab2ngxSZlollEZf3j9AoBL26ZcXeLNCwVix52tNY=
 github.com/mmcdole/gofeed v1.3.0 h1:5yn+HeqlcvjMeAI4gu6T+crm7d0anY85+M+v6fIFNG4=
 github.com/mmcdole/gofeed v1.3.0/go.mod h1:9TGv2LcJhdXePDzxiuMnukhV2/zb6VtnZt1mS+SjkLE=
 github.com/mmcdole/goxpp v1.1.1 h1:RGIX+D6iQRIunGHrKqnA2+700XMCnNv0bAOOv5MUhx8=
