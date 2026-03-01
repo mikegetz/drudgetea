@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 )
 
@@ -13,7 +14,7 @@ var (
 	containerStyle = lipgloss.NewStyle().Padding(0, 2)
 )
 
-func (m model) View() string {
+func (m model) View() tea.View {
 	centerStyle := lipgloss.NewStyle().Width(m.width).Align(lipgloss.Center)
 
 	view := "\n"
@@ -40,7 +41,7 @@ func (m model) View() string {
 	view += strings.Repeat("\n", height) + helpView + "\n"
 
 	// Send the UI for rendering
-	return containerStyle.Render(view)
+	return tea.NewView(containerStyle.Render(view))
 }
 
 func (m model) FooterView() string {

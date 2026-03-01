@@ -10,7 +10,7 @@ import (
 	"charm.land/bubbles/v2/help"
 	"charm.land/bubbles/v2/key"
 	"charm.land/lipgloss/v2"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 	"github.com/mikegetz/godrudge"
 )
 
@@ -175,7 +175,7 @@ func refreshMaxRows(client *godrudge.Client) int {
 }
 
 func (m model) Init() tea.Cmd {
-	return refresh(30 * time.Second)
+	return tea.Batch(refresh(30*time.Second), tea.RequestBackgroundColor)
 }
 
 type tickMsg time.Time
