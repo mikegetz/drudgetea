@@ -82,7 +82,7 @@ var keys = keyMap{
 		key.WithHelp("c", "copy url"),
 	),
 	Less: key.NewBinding(
-		key.WithKeys("enter", " "),
+		key.WithKeys("enter", "space"),
 		key.WithHelp("space/enter", "toggle more rows"),
 	),
 	Tab: key.NewBinding(
