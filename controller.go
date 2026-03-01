@@ -13,6 +13,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 
 	case tickMsg:
+		if !m.refreshEnabled {
+			return m, nil
+		}
 		m.client.ParseRSS()
 		m.maxRows = refreshMaxRows(m.client)
 		m.time = time.Now()
@@ -93,6 +96,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// d toggles linkgloss hyperlinks
 		case key.Matches(msg, m.keys.DisableLinks):
 			m.disableLinkgloss = !m.disableLinkgloss
+
+		// r toggles auto-refresh
+		case key.Matches(msg, m.keys.ToggleRefresh):
+			m.refreshEnabled = !m.refreshEnabled
+			if m.refreshEnabled {
+				return m, refresh(30 * time.Second)
+			}
 		}
 
 	}
