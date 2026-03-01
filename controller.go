@@ -3,14 +3,18 @@ package main
 import (
 	"time"
 
+	"charm.land/bubbles/v2/help"
+	"charm.land/bubbles/v2/key"
 	"github.com/atotto/clipboard"
-	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 )
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
+
+	case tea.BackgroundColorMsg:
+		m.help.Styles = help.DefaultStyles(msg.IsDark())
 
 	case tickMsg:
 		if !m.refreshEnabled {
@@ -24,7 +28,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 		switch {
 
 		// These keys should exit the program.

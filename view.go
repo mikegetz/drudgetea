@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 )
 
@@ -13,7 +14,7 @@ var (
 	containerStyle = lipgloss.NewStyle().Padding(0, 2)
 )
 
-func (m model) View() string {
+func (m model) View() tea.View {
 	centerStyle := lipgloss.NewStyle().Width(m.width).Align(lipgloss.Center)
 
 	view := "\n"
@@ -33,14 +34,14 @@ func (m model) View() string {
 	view += m.FooterView()
 
 	// The help view
-	m.help.Width = m.width - 4
+	m.help.SetWidth(m.width - 4)
 	helpView := m.help.View(m.keys)
 	height := 4 - strings.Count(helpView, "\n")
 
 	view += strings.Repeat("\n", height) + helpView + "\n"
 
 	// Send the UI for rendering
-	return containerStyle.Render(view)
+	return tea.NewView(containerStyle.Render(view))
 }
 
 func (m model) FooterView() string {

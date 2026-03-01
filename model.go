@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
+	"charm.land/bubbles/v2/help"
+	"charm.land/bubbles/v2/key"
 	"charm.land/lipgloss/v2"
-	"github.com/charmbracelet/bubbles/help"
-	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 	"github.com/mikegetz/godrudge"
 )
 
@@ -145,6 +145,9 @@ func initialModel() model {
 
 	maxRows := refreshMaxRows(client)
 
+	h := help.New()
+	h.Styles = help.DefaultDarkStyles()
+
 	model := model{
 		client:         client,
 		time:           time.Now(),
@@ -153,7 +156,7 @@ func initialModel() model {
 		showLogo:       true,
 		maxRows:        maxRows,
 		keys:           keys,
-		help:           help.New(),
+		help:           h,
 		inputStyle:     lipgloss.NewStyle().Foreground(lipgloss.Color("#FF75B7")),
 		refreshEnabled: true,
 	}
@@ -172,7 +175,7 @@ func refreshMaxRows(client *godrudge.Client) int {
 }
 
 func (m model) Init() tea.Cmd {
-	return refresh(30 * time.Second)
+	return tea.Batch(refresh(30*time.Second), tea.RequestBackgroundColor)
 }
 
 type tickMsg time.Time
