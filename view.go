@@ -50,12 +50,14 @@ func (m model) FooterView() string {
 	// Debug info
 	var debug string
 	if os.Getenv("DEBUG") != "" {
-		debug = m.inputStyle.Render("Debug: " + fmt.Sprintf("cursorx: %d, cursory: %d, curMaxRow: %d, columnWidth: %d, disableLinkgloss: %t, time: %s", m.cursorx, m.cursory, m.curMaxRow, m.columnWidth, m.disableLinkgloss, m.time.Format("15:04:05")))
+		debug = m.inputStyle.Render("\nDebug: " + fmt.Sprintf("cursorx: %d, cursory: %d, curMaxRow: %d, columnWidth: %d, disableLinkgloss: %t, time: %s", m.cursorx, m.cursory, m.curMaxRow, m.columnWidth, m.disableLinkgloss, m.time.Format("15:04:05")))
 	}
 
-	view := "\n" + footerStyleBorder.Render(footerStyleColor.Render(m.selected.Title)+"\n("+m.selected.URL+")\n"+debug)
+	view := footerStyleColor.Render(m.selected.Title)
+	view += "\n(" + lipgloss.NewStyle().Hyperlink(m.selected.URL).Render(m.selected.URL) + ")"
+	view += debug
 
-	return view
+	return footerStyleBorder.Render(view)
 }
 
 func (m *model) TopHeadlineView() string {
