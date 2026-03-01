@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"charm.land/lipgloss/v2"
@@ -19,18 +20,19 @@ var logo string
 // keyMap defines a set of keybindings. To work for help it must satisfy
 // key.Map. It could also very easily be a map[string]key.Binding.
 type keyMap struct {
-	Up           key.Binding
-	Down         key.Binding
-	Left         key.Binding
-	Right        key.Binding
-	Help         key.Binding
-	Quit         key.Binding
-	Copy         key.Binding
-	ShowLogo     key.Binding
-	Less         key.Binding
-	Tab          key.Binding
-	Version      key.Binding
-	DisableLinks key.Binding
+	Up            key.Binding
+	Down          key.Binding
+	Left          key.Binding
+	Right         key.Binding
+	Help          key.Binding
+	Quit          key.Binding
+	Copy          key.Binding
+	ShowLogo      key.Binding
+	Less          key.Binding
+	Tab           key.Binding
+	Version       key.Binding
+	DisableLinks  key.Binding
+	ToggleRefresh key.Binding
 }
 
 // ShortHelp returns keybindings to be shown in the mini help view. It's part
@@ -45,7 +47,8 @@ func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		{k.Up, k.Down, k.Left, k.Right},                   // first column
 		{k.Less, k.Tab, k.ShowLogo, k.Copy},               // second column
-		{k.Help, k.Quit, keys.DisableLinks, keys.Version}, // third column
+		{k.Help, k.Quit, k.DisableLinks, k.ToggleRefresh}, // third column
+		{k.Version},
 	}
 }
 
@@ -92,11 +95,15 @@ var keys = keyMap{
 	),
 	Version: key.NewBinding(
 		key.WithKeys("v"),
-		key.WithHelp("", "\nVersion: "+Version),
+		key.WithHelp("", strings.Repeat("\n", 3)+"Version: "+Version),
 	),
 	DisableLinks: key.NewBinding(
 		key.WithKeys("d"),
 		key.WithHelp("d", "toggle links"),
+	),
+	ToggleRefresh: key.NewBinding(
+		key.WithKeys("r"),
+		key.WithHelp("r", "toggle refresh"),
 	),
 }
 
@@ -119,12 +126,13 @@ type model struct {
 	disableLinkgloss bool           // whether to disable linkgloss styles, for better compatibility with terminals that don't support them
 
 	//controller state
-	selected   godrudge.Headline // the currently selected headline
-	keys       keyMap            // the keybindings
-	help       help.Model        // the help view
-	inputStyle lipgloss.Style    // style for debug info
-	lastKey    string            // the last key pressed, for debug purposes
-	quitting   bool              // whether the application is quitting
+	selected       godrudge.Headline // the currently selected headline
+	keys           keyMap            // the keybindings
+	help           help.Model        // the help view
+	inputStyle     lipgloss.Style    // style for debug info
+	lastKey        string            // the last key pressed, for debug purposes
+	quitting       bool              // whether the application is quitting
+	refreshEnabled bool              // whether auto-refresh is enabled
 }
 
 func initialModel() model {
@@ -138,15 +146,16 @@ func initialModel() model {
 	maxRows := refreshMaxRows(client)
 
 	model := model{
-		client:        client,
-		time:          time.Now(),
-		toggleRowLess: 10,
-		cursorGroup:   1,
-		showLogo:      true,
-		maxRows:       maxRows,
-		keys:          keys,
-		help:          help.New(),
-		inputStyle:    lipgloss.NewStyle().Foreground(lipgloss.Color("#FF75B7")),
+		client:         client,
+		time:           time.Now(),
+		toggleRowLess:  10,
+		cursorGroup:    1,
+		showLogo:       true,
+		maxRows:        maxRows,
+		keys:           keys,
+		help:           help.New(),
+		inputStyle:     lipgloss.NewStyle().Foreground(lipgloss.Color("#FF75B7")),
+		refreshEnabled: true,
 	}
 
 	return model
