@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
@@ -55,7 +56,14 @@ func (m model) FooterView() string {
 	}
 
 	view := footerStyleColor.Render(m.selected.Title)
-	view += "\n(" + lipgloss.NewStyle().Hyperlink(m.selected.URL).Render(m.selected.URL) + ")"
+
+	urlLine := "(" + lipgloss.NewStyle().Hyperlink(m.selected.URL).Render(m.selected.URL) + ")"
+	timeSince := time.Since(m.time).Truncate(time.Second).String()
+	timeLabel := m.help.Styles.ShortKey.Render(timeSince) + m.help.Styles.ShortDesc.Render(" since last refresh")
+	remainingWidth := m.columnWidth*3 - 2 - lipgloss.Width(urlLine)
+	timeStr := lipgloss.NewStyle().Width(remainingWidth).Align(lipgloss.Right).Render(timeLabel)
+	view += "\n" + urlLine + timeStr
+
 	view += debug
 
 	return footerStyleBorder.Render(view)
