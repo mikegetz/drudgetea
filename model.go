@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"fmt"
 	"os"
+	"time"
 
 	"charm.land/lipgloss/v2"
 	"github.com/charmbracelet/bubbles/help"
@@ -101,9 +102,8 @@ var keys = keyMap{
 
 type model struct {
 	// data
-	headlines     [][]godrudge.Headline // all headlines of drudge report
-	mainHeadlines []godrudge.Headline   // the main headlines, which are displayed above the logo section
-	topHeadlines  []godrudge.Headline   // the top headlines, which are displayed above the main headlines left aligned
+	client *godrudge.Client
+	time   time.Time // last time of RSS feed fetch
 
 	// view state
 	cursorGroup      int            // the current column group (top, main, or headline columns)
@@ -135,17 +135,11 @@ func initialModel() model {
 		os.Exit(1)
 	}
 
-	maxRows := 0
-	for _, col := range client.Page.HeadlineColumns {
-		if len(col) > maxRows {
-			maxRows = len(col)
-		}
-	}
+	maxRows := refreshMaxRows(client)
 
 	model := model{
-		headlines:     client.Page.HeadlineColumns,
-		mainHeadlines: client.Page.MainHeadlines,
-		topHeadlines:  client.Page.TopHeadlines,
+		client:        client,
+		time:          time.Now(),
 		toggleRowLess: 10,
 		cursorGroup:   1,
 		showLogo:      true,
@@ -158,7 +152,25 @@ func initialModel() model {
 	return model
 }
 
+func refreshMaxRows(client *godrudge.Client) int {
+	maxRows := 0
+	for _, col := range client.Page.HeadlineColumns {
+		if len(col) > maxRows {
+			maxRows = len(col)
+		}
+	}
+	return maxRows
+}
+
 func (m model) Init() tea.Cmd {
-	// Just return `nil`, which means "no I/O right now, please."
-	return nil
+	return refresh(30 * time.Second)
+}
+
+type tickMsg time.Time
+
+func refresh(d time.Duration) tea.Cmd {
+	// tea.Tick schedules a single message after d.
+	return tea.Tick(d, func(t time.Time) tea.Msg {
+		return tickMsg(t)
+	})
 }

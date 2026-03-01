@@ -1,13 +1,22 @@
 package main
 
 import (
+	"time"
+
 	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+
 	switch msg := msg.(type) {
+
+	case tickMsg:
+		m.client.ParseRSS()
+		m.maxRows = refreshMaxRows(m.client)
+		m.time = time.Now()
+		return m, refresh(30 * time.Second)
 
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
@@ -23,7 +32,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keys.Left):
 			if m.cursorGroup == 2 {
 				if m.cursorx > 0 {
-					if (len(m.headlines[m.cursorx-1]) - 1) >= m.cursory {
+					if (len(m.client.Page.HeadlineColumns[m.cursorx-1]) - 1) >= m.cursory {
 						m.cursorx--
 					}
 				}
@@ -32,8 +41,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// The "right" and "l" keys move the cursor right
 		case key.Matches(msg, m.keys.Right):
 			if m.cursorGroup == 2 {
-				if m.cursorx < len(m.headlines)-1 {
-					if (len(m.headlines[m.cursorx+1]) - 1) >= m.cursory {
+				if m.cursorx < len(m.client.Page.HeadlineColumns)-1 {
+					if (len(m.client.Page.HeadlineColumns[m.cursorx+1]) - 1) >= m.cursory {
 						m.cursorx++
 					}
 				}
@@ -92,15 +101,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// Track ColumnHeadline Row length for cursor movement and column expansion
 	switch m.cursorGroup {
 	case 0:
-		m.selected = m.topHeadlines[m.cursory]
-		m.curMaxRow = len(m.topHeadlines)
+		m.selected = m.client.Page.TopHeadlines[m.cursory]
+		m.curMaxRow = len(m.client.Page.TopHeadlines)
 	case 1:
-		m.selected = m.mainHeadlines[m.cursory]
-		m.curMaxRow = len(m.mainHeadlines)
+		m.selected = m.client.Page.MainHeadlines[m.cursory]
+		m.curMaxRow = len(m.client.Page.MainHeadlines)
 	case 2:
-		m.selected = m.headlines[m.cursorx][m.cursory]
+		m.selected = m.client.Page.HeadlineColumns[m.cursorx][m.cursory]
 		if m.toggleRowLess == 0 {
-			m.curMaxRow = len(m.headlines[m.cursorx])
+			m.curMaxRow = len(m.client.Page.HeadlineColumns[m.cursorx])
 		} else {
 			m.curMaxRow = m.toggleRowLess
 		}
