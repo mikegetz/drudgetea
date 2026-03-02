@@ -2,6 +2,11 @@
 A Bubble Tea implementation of https://github.com/mikegetz/drudge
 
 ## Install
+### Homebrew
+```
+brew tap mikegetz/drudgetea
+brew install drudgetea
+```
 ### Shell
 #### curl
 ```
