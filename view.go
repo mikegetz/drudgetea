@@ -64,9 +64,13 @@ func (m model) FooterView() string {
 	view := footerStyleColor.Render(m.selected.Title)
 
 	urlLine := "(" + lipgloss.NewStyle().Hyperlink(m.selected.URL).Render(m.selected.URL) + ")"
-	timeSince := time.Since(m.time).Truncate(time.Second).String()
-	timeStr := m.help.Styles.ShortKey.Render(timeSince) + m.help.Styles.ShortDesc.Render(" since last refresh")
-	view += "\n" + urlLine + "\n" + timeStr
+	view += "\n" + urlLine
+
+	if m.toggleRowLess == 0 || os.Getenv("DEBUG") != "" {
+		timeSince := time.Since(m.time).Truncate(time.Second).String()
+		timeStr := m.help.Styles.ShortKey.Render(timeSince) + m.help.Styles.ShortDesc.Render(" since last refresh")
+		view += "\n" + timeStr
+	}
 
 	view += debug
 
