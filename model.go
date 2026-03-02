@@ -9,8 +9,8 @@ import (
 
 	"charm.land/bubbles/v2/help"
 	"charm.land/bubbles/v2/key"
-	"charm.land/lipgloss/v2"
 	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/mikegetz/godrudge"
 )
 
@@ -38,7 +38,7 @@ type keyMap struct {
 // ShortHelp returns keybindings to be shown in the mini help view. It's part
 // of the key.Map interface.
 func (k keyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Tab, k.Less, k.Help, k.Quit}
+	return []key.Binding{k.Help, k.Quit, k.Tab, k.Less, k.ShowLogo}
 }
 
 // FullHelp returns keybindings for the expanded help view. It's part of the
@@ -87,11 +87,11 @@ var keys = keyMap{
 	),
 	Tab: key.NewBinding(
 		key.WithKeys("tab"),
-		key.WithHelp("tab", "toggle headline group"),
+		key.WithHelp("tab", "switch headline group"),
 	),
 	ShowLogo: key.NewBinding(
-		key.WithKeys("L"),
-		key.WithHelp("L", "toggle ascii art logo"),
+		key.WithKeys("a"),
+		key.WithHelp("a", "toggle ASCII art"),
 	),
 	Version: key.NewBinding(
 		key.WithKeys("v"),
