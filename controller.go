@@ -119,10 +119,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch m.cursorGroup {
 	case 0:
 		m.selected = m.client.Page.TopHeadlines[m.cursory]
-		m.curMaxRow = len(m.client.Page.TopHeadlines)
+		if m.toggleRowLess > 0 && m.toggleRowLess < len(m.client.Page.TopHeadlines) {
+			m.curMaxRow = m.toggleRowLess
+		} else {
+			m.curMaxRow = len(m.client.Page.TopHeadlines)
+		}
 	case 1:
 		m.selected = m.client.Page.MainHeadlines[m.cursory]
-		m.curMaxRow = len(m.client.Page.MainHeadlines)
+		if m.toggleRowLess > 0 && m.toggleRowLess < len(m.client.Page.MainHeadlines) {
+			m.curMaxRow = m.toggleRowLess
+		} else {
+			m.curMaxRow = len(m.client.Page.MainHeadlines)
+		}
 	case 2:
 		m.selected = m.client.Page.HeadlineColumns[m.cursorx][m.cursory]
 		if m.toggleRowLess == 0 {
