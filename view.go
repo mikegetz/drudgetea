@@ -65,10 +65,8 @@ func (m model) FooterView() string {
 
 	urlLine := "(" + lipgloss.NewStyle().Hyperlink(m.selected.URL).Render(m.selected.URL) + ")"
 	timeSince := time.Since(m.time).Truncate(time.Second).String()
-	timeLabel := m.help.Styles.ShortKey.Render(timeSince) + m.help.Styles.ShortDesc.Render(" since last refresh")
-	remainingWidth := m.columnWidth*3 - 2 - lipgloss.Width(urlLine)
-	timeStr := lipgloss.NewStyle().Width(remainingWidth).Align(lipgloss.Right).Render(timeLabel)
-	view += "\n" + urlLine + timeStr
+	timeStr := m.help.Styles.ShortKey.Render(timeSince) + m.help.Styles.ShortDesc.Render(" since last refresh")
+	view += "\n" + urlLine + "\n" + timeStr
 
 	view += debug
 
