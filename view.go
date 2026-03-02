@@ -8,6 +8,7 @@ import (
 
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
+	"github.com/mikegetz/godrudge"
 )
 
 var (
@@ -70,8 +71,14 @@ func (m model) FooterView() string {
 }
 
 func (m *model) TopHeadlineView() string {
+	var topHeadlines []godrudge.Headline
+	if m.toggleRowLess > 0 && m.toggleRowLess < len(m.client.Page.TopHeadlines) {
+		topHeadlines = m.client.Page.TopHeadlines[:m.toggleRowLess]
+	} else {
+		topHeadlines = m.client.Page.TopHeadlines
+	}
 	view := ""
-	for i, topHeadline := range m.client.Page.TopHeadlines {
+	for i, topHeadline := range topHeadlines {
 		headlineStyle := topHeadline.Style.Width(m.width).Align(lipgloss.Left).Hyperlink(topHeadline.URL)
 
 		if m.disableLinkgloss {
@@ -91,8 +98,14 @@ func (m *model) TopHeadlineView() string {
 }
 
 func (m *model) MainHeadlineView() string {
+	var mainHeadlines []godrudge.Headline
+	if m.toggleRowLess > 0 && m.toggleRowLess < len(m.client.Page.MainHeadlines) {
+		mainHeadlines = m.client.Page.MainHeadlines[:m.toggleRowLess]
+	} else {
+		mainHeadlines = m.client.Page.MainHeadlines
+	}
 	view := ""
-	for i, mainHeadline := range m.client.Page.MainHeadlines {
+	for i, mainHeadline := range mainHeadlines {
 		var headlineStyle = mainHeadline.Style.Width(m.width).Align(lipgloss.Center).Hyperlink(mainHeadline.URL)
 
 		if m.disableLinkgloss {
