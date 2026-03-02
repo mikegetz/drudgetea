@@ -43,7 +43,12 @@ func (m model) View() tea.View {
 	view += strings.Repeat("\n", height) + helpView + "\n"
 
 	// Send the UI for rendering
-	return tea.NewView(containerStyle.Render(view))
+
+	teaView := tea.NewView(containerStyle.Render(view))
+
+	teaView.BackgroundColor = lipgloss.Color("#181A1B")
+
+	return teaView
 }
 
 func (m model) FooterView() string {
