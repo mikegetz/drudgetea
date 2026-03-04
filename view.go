@@ -12,17 +12,19 @@ import (
 )
 
 var (
-	cs             = "  "
-	containerStyle = lipgloss.NewStyle().Padding(0, 2)
+	cs               = "  "
+	containerPadding = 2
+	containerStyle   = lipgloss.NewStyle().Padding(0, containerPadding)
 )
 
 func (m model) View() tea.View {
-	centerStyle := lipgloss.NewStyle().Width(m.width).Align(lipgloss.Center)
+	contentWidth := m.width - (containerPadding * 2)
+	centerStyle := lipgloss.NewStyle().Width(contentWidth).Align(lipgloss.Center)
 
 	view := "\n"
 
-	view += m.TopHeadlineView()
-	view += m.MainHeadlineView()
+	view += m.TopHeadlineView(contentWidth)
+	view += m.MainHeadlineView(contentWidth)
 
 	if m.showLogo {
 		view += centerStyle.Render(logo) + "\n"
@@ -30,13 +32,13 @@ func (m model) View() tea.View {
 		view += "\n"
 	}
 
-	view += m.ColumnView()
+	view += m.ColumnView(contentWidth)
 
 	// The footer
-	view += m.FooterView()
+	view += m.FooterView(contentWidth)
 
 	// The help view
-	m.help.SetWidth(m.width - 4)
+	m.help.SetWidth(contentWidth)
 	helpView := m.help.View(m.keys)
 	height := 4 - strings.Count(helpView, "\n")
 
@@ -51,9 +53,9 @@ func (m model) View() tea.View {
 	return teaView
 }
 
-func (m model) FooterView() string {
+func (m model) FooterView(contentWidth int) string {
 	footerStyleColor := m.cursorStyle.UnsetAlign().UnsetWidth()
-	footerStyleBorder := lipgloss.NewStyle().Border(lipgloss.RoundedBorder(), true).BorderForeground(lipgloss.Color("#888888")).Width((m.columnWidth * 3))
+	footerStyleBorder := lipgloss.NewStyle().Border(lipgloss.RoundedBorder(), true).BorderForeground(lipgloss.Color("#888888")).Width(contentWidth)
 
 	// Debug info
 	var debug string
@@ -77,7 +79,7 @@ func (m model) FooterView() string {
 	return footerStyleBorder.Render(view)
 }
 
-func (m *model) TopHeadlineView() string {
+func (m *model) TopHeadlineView(contentWidth int) string {
 	var topHeadlines []godrudge.Headline
 	if m.toggleRowLess > 0 && m.toggleRowLess < len(m.client.Page.TopHeadlines) {
 		topHeadlines = m.client.Page.TopHeadlines[:m.toggleRowLess]
@@ -86,7 +88,7 @@ func (m *model) TopHeadlineView() string {
 	}
 	view := ""
 	for i, topHeadline := range topHeadlines {
-		headlineStyle := topHeadline.Style.Width(m.width).Align(lipgloss.Left).Hyperlink(topHeadline.URL)
+		headlineStyle := topHeadline.Style.Width(contentWidth).Align(lipgloss.Left).Hyperlink(topHeadline.URL)
 
 		if m.disableLinkgloss {
 			headlineStyle = headlineStyle.UnsetHyperlink()
@@ -104,7 +106,7 @@ func (m *model) TopHeadlineView() string {
 	return view
 }
 
-func (m *model) MainHeadlineView() string {
+func (m *model) MainHeadlineView(contentWidth int) string {
 	var mainHeadlines []godrudge.Headline
 	if m.toggleRowLess > 0 && m.toggleRowLess < len(m.client.Page.MainHeadlines) {
 		mainHeadlines = m.client.Page.MainHeadlines[:m.toggleRowLess]
@@ -113,7 +115,7 @@ func (m *model) MainHeadlineView() string {
 	}
 	view := ""
 	for i, mainHeadline := range mainHeadlines {
-		var headlineStyle = mainHeadline.Style.Width(m.width).Align(lipgloss.Center).Hyperlink(mainHeadline.URL)
+		var headlineStyle = mainHeadline.Style.Width(contentWidth).Align(lipgloss.Center).Hyperlink(mainHeadline.URL)
 
 		if m.disableLinkgloss {
 			headlineStyle = headlineStyle.UnsetHyperlink()
@@ -130,7 +132,8 @@ func (m *model) MainHeadlineView() string {
 	return view
 }
 
-func (m *model) ColumnView() string {
+func (m *model) ColumnView(contentWidth int) string {
+	columnContentWidth := contentWidth - (containerPadding * 2)
 	var rows int
 	if m.toggleRowLess > 0 {
 		rows = m.toggleRowLess
@@ -138,11 +141,11 @@ func (m *model) ColumnView() string {
 		rows = m.maxRows
 	}
 
-	m.columnWidth = (m.width - (len(cs) * 2)) / len(m.client.Page.HeadlineColumns)
+	m.columnWidth = (columnContentWidth - (len(cs) * 2)) / len(m.client.Page.HeadlineColumns)
 	view := ""
 	if m.columnWidth > 3 {
 		for i := 0; i < rows; i++ {
-			for j, col := range m.client.Page.HeadlineColumns {
+			for colIndex, col := range m.client.Page.HeadlineColumns {
 				if i < len(col) {
 					headlineStyle := col[i].Style.Width(m.columnWidth).Hyperlink(col[i].URL)
 
@@ -150,7 +153,16 @@ func (m *model) ColumnView() string {
 						headlineStyle = headlineStyle.UnsetHyperlink()
 					}
 
-					if i == m.cursory && j == m.cursorx && m.cursorGroup == 2 {
+					switch colIndex {
+					case 0:
+						headlineStyle = headlineStyle.Align(lipgloss.Left)
+					case 1:
+						headlineStyle = headlineStyle.Align(lipgloss.Center)
+					case 2:
+						headlineStyle = headlineStyle.Align(lipgloss.Right)
+					}
+
+					if i == m.cursory && colIndex == m.cursorx && m.cursorGroup == 2 {
 						m.cursorStyle = headlineStyle
 						headlineStyle = headlineStyle.Bold(true)
 					}
@@ -163,12 +175,12 @@ func (m *model) ColumnView() string {
 				} else {
 					view += strings.Repeat(" ", m.columnWidth)
 				}
-				if j < len(m.client.Page.HeadlineColumns)-1 {
+				if colIndex < len(m.client.Page.HeadlineColumns)-1 {
 					view += cs
 				}
 			}
 			view += "\n"
 		}
 	}
-	return view
+	return containerStyle.Render(view) + "\n"
 }
