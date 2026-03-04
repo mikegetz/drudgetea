@@ -12,7 +12,6 @@ import (
 )
 
 var (
-	cs               = "  "
 	containerPadding = 2
 	containerStyle   = lipgloss.NewStyle().Padding(0, containerPadding)
 )
@@ -141,7 +140,7 @@ func (m *model) ColumnView(contentWidth int) string {
 		rows = m.maxRows
 	}
 
-	m.columnWidth = (columnContentWidth - (len(cs) * 2)) / len(m.client.Page.HeadlineColumns)
+	m.columnWidth = columnContentWidth / len(m.client.Page.HeadlineColumns)
 	view := ""
 	if m.columnWidth > 3 {
 		for i := 0; i < rows; i++ {
@@ -174,9 +173,6 @@ func (m *model) ColumnView(contentWidth int) string {
 					}
 				} else {
 					view += strings.Repeat(" ", m.columnWidth)
-				}
-				if colIndex < len(m.client.Page.HeadlineColumns)-1 {
-					view += cs
 				}
 			}
 			view += "\n"
