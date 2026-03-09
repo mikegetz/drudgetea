@@ -3,6 +3,8 @@ Interactive RSS Reader for drudgereportfeed.com
 
 A Bubble Tea implementation of https://github.com/mikegetz/drudge
 
+![2026-03-09 13-58-22](https://github.com/user-attachments/assets/002a0477-c812-49a9-82f7-596a973eabf5)
+
 ## Install
 ### Homebrew
 ```
