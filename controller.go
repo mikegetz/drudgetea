@@ -118,7 +118,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// Track ColumnHeadline Row length for cursor movement and column expansion
 	switch m.cursorGroup {
 	case 0:
-		m.selected = m.client.Page.TopHeadlines[m.cursory]
+		if len(m.client.Page.TopHeadlines) > 0 {
+			m.selected = m.client.Page.TopHeadlines[m.cursory]
+		}
 		if m.toggleRowLess > 0 && m.toggleRowLess < len(m.client.Page.TopHeadlines) {
 			m.curMaxRow = m.toggleRowLess
 		} else {
