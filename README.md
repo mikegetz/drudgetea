@@ -1,4 +1,6 @@
 # drudgetea
+Interactive RSS Reader for drudgereportfeed.com
+
 A Bubble Tea implementation of https://github.com/mikegetz/drudge
 
 ## Install
