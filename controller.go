@@ -99,6 +99,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.toggleRowLess = 0
 			}
+			if m.toggleRowLess > 0 && m.cursory > m.toggleRowLess-1 {
+				m.cursory = m.toggleRowLess - 1
+			}
 
 		// d toggles linkgloss hyperlinks
 		case key.Matches(msg, m.keys.DisableLinks):
