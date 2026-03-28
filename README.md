@@ -1,4 +1,7 @@
 # drudgetea
+[![Latest Release](https://img.shields.io/github/v/release/mikegetz/drudgetea)](https://github.com/mikegetz/drudgetea/releases/latest)
+
+
 Interactive RSS Reader for drudgereportfeed.com
 
 A Bubble Tea implementation of https://github.com/mikegetz/drudge
